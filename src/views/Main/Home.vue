@@ -114,6 +114,23 @@ export default {
                     });
 
                     this.renameFiles(subFiles);
+
+                    let subFile;
+                    for (let i = 0; i < subFiles.length; i++) {
+                        subFile = subFiles[i];
+                        fs.rename(
+                            subFile.path,
+                            path.join(
+                                path.dirname(subFile.path),
+                                subFile.name.normalize("NFC")
+                            ),
+                            (error) => {
+                                if (error) {
+                                    console.error(error);
+                                }
+                            }
+                        );
+                    }
                 } else {
                     fs.rename(
                         file.path,
