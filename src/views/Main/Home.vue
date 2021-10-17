@@ -71,7 +71,7 @@ export default {
             evt.preventDefault();
 
             let files = evt.dataTransfer.files;
-            console.info("files", files);
+            // console.info("files", files);
             await _self.renameFiles(files);
             this.initMsg = this.initMsg_;
             this.initMsg_sub = this.initMsg_sub_;
@@ -98,9 +98,6 @@ export default {
             for (let i = 0; i < files.length; i++) {
                 file = files[i];
                 if (fs.statSync(file.path).isDirectory()) {
-                    console.info("file is directory,", file);
-                    console.info("readdir,", fs.readdirSync(file.path));
-
                     let subFiles = [];
                     fs.readdirSync(file.path).forEach((sub_file) => {
                         // console.log(
@@ -115,35 +112,28 @@ export default {
 
                     this.renameFiles(subFiles);
 
-                    let subFile;
-                    for (let i = 0; i < subFiles.length; i++) {
-                        subFile = subFiles[i];
-                        fs.rename(
-                            subFile.path,
-                            path.join(
-                                path.dirname(subFile.path),
-                                subFile.name.normalize("NFC")
-                            ),
-                            (error) => {
-                                if (error) {
-                                    console.error(error);
-                                }
-                            }
-                        );
+                    try {
+                        fs.renameSync(file.path, file.path.normalize("NFC"));
+                        // console.info(
+                        //     "Directroy file.path converting",
+                        //     file.path
+                        // );
+                    } catch (err) {
+                        console.error(err);
                     }
                 } else {
-                    fs.rename(
-                        file.path,
-                        path.join(
-                            path.dirname(file.path),
-                            file.name.normalize("NFC")
-                        ),
-                        (error) => {
-                            if (error) {
-                                console.error(error);
-                            }
-                        }
-                    );
+                    try {
+                        fs.renameSync(
+                            file.path,
+                            path.join(
+                                path.dirname(file.path),
+                                file.name.normalize("NFC")
+                            )
+                        );
+                        // console.info("file.path converting", file.name);
+                    } catch (err) {
+                        console.error(err);
+                    }
                 }
             }
         },
