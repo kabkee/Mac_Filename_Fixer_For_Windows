@@ -15,11 +15,13 @@
                     width="40"
                 />
 
-                <h3>Mac Filename Fixer For Windows {{ version }}</h3>
+                <h3>Mac Filename Fixer {{ version }}</h3>
             </div>
 
             <v-spacer></v-spacer>
-            <v-btn text to="/about"><v-icon>mdi-information-outline</v-icon> About</v-btn>
+            <v-btn text to="/about"
+                ><v-icon>mdi-information-outline</v-icon> About</v-btn
+            >
 
             <!-- <v-btn dark icon @click="drawer = !drawer">
                 <v-icon>mdi-dots-vertical</v-icon>

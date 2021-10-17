@@ -5,9 +5,16 @@
             ref="dragFile"
             style="height: 100%; display: flex; align-items: center"
         >
-            <h1 style="text-align: center; width: 100%">
+            <h3 style="text-align: center; width: 100%">
                 {{ initMsg }}
-            </h1>
+
+                <h5
+                    v-if="initMsg_sub"
+                    style="text-align: center; width: 100%; color: #666; display: block;"
+                >
+                    {{ initMsg_sub }}
+                </h5>
+            </h3>
         </div>
     </div>
 </template>
@@ -30,6 +37,9 @@ export default {
         return {
             initMsg: "파일을 떨어뜨려주세요.",
             initMsg_: "파일을 떨어뜨려주세요.",
+            initMsg_prog: "변환 중...",
+            initMsg_sub: "",
+            initMsg_sub_: "변환완료. 또 주세요.",
             sideDrawerWidth: 250,
             items: [
                 { title: "Home", icon: "mdi-home-city" },
@@ -61,9 +71,10 @@ export default {
             evt.preventDefault();
 
             let files = evt.dataTransfer.files;
-            console.info(files);
-
-            _self.renameFiles(files);
+            console.info("files", files);
+            await _self.renameFiles(files);
+            this.initMsg = this.initMsg_;
+            this.initMsg_sub = this.initMsg_sub_;
         });
     },
     computed: {
@@ -81,21 +92,42 @@ export default {
         }),
         renameFiles(files) {
             let file;
+            this.initMsg = this.initMsg_prog;
+            this.initMsg_sub = "";
+
             for (let i = 0; i < files.length; i++) {
                 file = files[i];
+                if (fs.statSync(file.path).isDirectory()) {
+                    console.info("file is directory,", file);
+                    console.info("readdir,", fs.readdirSync(file.path));
 
-                fs.rename(
-                    file.path,
-                    path.join(
-                        path.dirname(file.path),
-                        file.name.normalize("NFC")
-                    ),
-                    (error) => {
-                        if (error) {
-                            console.error(error);
+                    let subFiles = [];
+                    fs.readdirSync(file.path).forEach((sub_file) => {
+                        // console.log(
+                        //     sub_file,
+                        //     fs.statSync(path.join(file.path, sub_file))
+                        // );
+                        subFiles.push({
+                            name: sub_file,
+                            path: path.join(file.path, sub_file),
+                        });
+                    });
+
+                    this.renameFiles(subFiles);
+                } else {
+                    fs.rename(
+                        file.path,
+                        path.join(
+                            path.dirname(file.path),
+                            file.name.normalize("NFC")
+                        ),
+                        (error) => {
+                            if (error) {
+                                console.error(error);
+                            }
                         }
-                    }
-                );
+                    );
+                }
             }
         },
     },
