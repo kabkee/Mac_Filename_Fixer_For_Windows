@@ -83,7 +83,19 @@ export default {
             let file;
             for (let i = 0; i < files.length; i++) {
                 file = files[i];
-                fs.rename(file.name, file.name.normalize("NFC"), () => {});
+
+                fs.rename(
+                    file.path,
+                    path.join(
+                        path.dirname(file.path),
+                        file.name.normalize("NFC")
+                    ),
+                    (error) => {
+                        if (error) {
+                            console.error(error);
+                        }
+                    }
+                );
             }
         },
     },
