@@ -1,6 +1,6 @@
 {
-    "name": "look360_utils_vue_electron_0.1.4",
-    "version": "0.1.4",
+    "name": "mac_filename_fixer_for_windows",
+    "version": "0.1.0",
     "private": true,
     "scripts": {
         "serve": "vue-cli-service serve",

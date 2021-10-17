@@ -90,7 +90,7 @@ export default {
             setXmlPath: "viewer/setXmlPath",
             _backupXml: "viewer/_backupXml",
         }),
-        renameFiles(files) {
+        async renameFiles(files) {
             let file;
             this.initMsg = this.initMsg_prog;
             this.initMsg_sub = "";
@@ -110,7 +110,7 @@ export default {
                         });
                     });
 
-                    this.renameFiles(subFiles);
+                    await this.renameFiles(subFiles);
 
                     try {
                         fs.renameSync(file.path, file.path.normalize("NFC"));
