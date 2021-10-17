@@ -1,6 +1,7 @@
 <template>
     <v-app>
         <MainHeader v-if="$route.path == '/'" />
+        <SubHeader v-else />
         <v-main>
             <router-view />
 
@@ -59,12 +60,14 @@
 import { mapState, mapActions } from "vuex";
 import CardsHeart from "vue-material-design-icons/CardsHeart.vue";
 import MainHeader from "@/components/MainHeader.vue";
+import SubHeader from "@/components/SubHeader.vue";
 
 export default {
     name: "App",
     components: {
         CardsHeart,
         MainHeader,
+        SubHeader,
     },
     props: {},
     data: () => ({
