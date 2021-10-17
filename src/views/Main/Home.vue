@@ -1,21 +1,45 @@
 <template>
     <div class="home">
-        <div
-            id="dragFile"
-            ref="dragFile"
-            style="height: 100%; display: flex; align-items: center"
-        >
-            <h3 style="text-align: center; width: 100%">
-                {{ initMsg }}
-
-                <h5
-                    v-if="initMsg_sub"
-                    style="text-align: center; width: 100%; color: #666; display: block;"
+        <v-container>
+            <v-text-field
+                v-model="selfConvert"
+                label="변환 할 글씨"
+                required
+            >
+                <v-btn
+                    slot="append"
+                    color="gray"
+                    fab
+                    x-small
+                    @click='selfConvert = ""'
                 >
-                    {{ initMsg_sub }}
-                </h5>
-            </h3>
-        </div>
+                    <v-icon>mdi-close</v-icon>
+                </v-btn>
+            </v-text-field>
+            <v-text-field
+                :value='convertedSelf'
+                readonly
+                label="변환 후 글씨"
+                @click='copyText'
+                ref='textToCopy'
+            ></v-text-field>
+            <div
+                id="dragFile"
+                ref="dragFile"
+                style="height: 100%; display: flex; align-items: center"
+            >
+                <h3 style="text-align: center; width: 100%">
+                    {{ initMsg }}
+
+                    <h5
+                        v-if="initMsg_sub"
+                        style="text-align: center; width: 100%; color: #666; display: block;"
+                    >
+                        {{ initMsg_sub }}
+                    </h5>
+                </h3>
+            </div>
+        </v-container>
     </div>
 </template>
 
@@ -46,6 +70,7 @@ export default {
                 { title: "My Account", icon: "mdi-account" },
                 { title: "Users", icon: "mdi-account-group-outline" },
             ],
+            selfConvert: '',
         };
     },
     created() {},
@@ -79,6 +104,9 @@ export default {
     },
     computed: {
         ...mapState({}),
+        convertedSelf(){
+            return this.selfConvert?this.selfConvert.normalize('NFC'):'';
+        }
     },
     methods: {
         ...mapActions({
@@ -113,7 +141,12 @@ export default {
                     await this.renameFiles(subFiles);
 
                     try {
-                        fs.renameSync(file.path, file.path.normalize("NFC"));
+                        let filePathArray = file.path.split(path.sep);
+                        let currentFolder = filePathArray.pop();
+                        let parentFolder = filePathArray.join(path.sep);
+                        console.info('currentFolder, parentFolder', currentFolder, parentFolder)
+                         
+                        fs.renameSync(file.path, path.join(parentFolder, currentFolder.normalize("NFC")) );
                         // console.info(
                         //     "Directroy file.path converting",
                         //     file.path
@@ -136,6 +169,12 @@ export default {
                     }
                 }
             }
+        },
+        copyText(){
+            let textToCopy = this.$refs.textToCopy.$el.querySelector('input')
+          textToCopy.select()
+          document.execCommand("copy");
+
         },
     },
 };
