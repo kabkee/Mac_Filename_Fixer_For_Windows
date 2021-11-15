@@ -7,7 +7,7 @@ module.exports = {
             nodeIntegration: true,
             builderOptions: {
                 productName: "Mac Filename Fixer For Windows",
-                appId: 'kr.look360.kabkee',
+                appId: 'kr.look360.kabkee.mac_filename_fixer_for_windows',
                 mac: {
                   icon: 'src/assets/look360_favicon@3x.png',
                 },
